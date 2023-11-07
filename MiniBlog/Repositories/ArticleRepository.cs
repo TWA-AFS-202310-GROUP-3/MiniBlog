@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace MiniBlog.Repositories
 {
-    public class ArticleRepository
+    public class ArticleRepository : IArticleRepository
     {
         private readonly IMongoCollection<Article> articleCollection;
 
@@ -25,6 +25,11 @@ namespace MiniBlog.Repositories
         {
             await articleCollection.InsertOneAsync(article);
             return await articleCollection.Find(a => a.Title == article.Title).FirstAsync();
+        }
+
+        public async Task<Article> GetArticleById(string id)
+        {
+            return await articleCollection.Find(article => article.Id == id).FirstAsync();
         }
     }
 }
