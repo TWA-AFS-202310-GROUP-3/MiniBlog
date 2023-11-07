@@ -16,9 +16,12 @@ namespace MiniBlog.Controllers
     {
         private readonly ArticleService articleService = null!;
 
-        public ArticleController(ArticleService articleService)
+        private readonly UserService userService = null!;
+
+        public ArticleController(ArticleService articleService, UserService userService)
         {
             this.articleService = articleService;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -36,9 +39,9 @@ namespace MiniBlog.Controllers
         }
 
         [HttpGet("{id}")]
-        public Article? GetById(Guid id)
+        public async Task<Article?> GetById(Guid id)
         {
-            return articleService.GetById(id);
+            return await articleService.GetById(id);
         }
     }
 }
