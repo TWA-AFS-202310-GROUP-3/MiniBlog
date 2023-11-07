@@ -1,19 +1,23 @@
-﻿using MiniBlog.Repositories;
+﻿using MiniBlog.Model;
+using MiniBlog.Repositories;
 using MiniBlog.Stores;
+using System.Threading.Tasks;
 
 namespace MiniBlog.Services
 {
     public class UserService
     {
-        private readonly ArticleStore articleStore = null!;
-        private readonly UserStore userStore = null!;
-        private readonly UserRepository userRepository = null!;
-
-        public UserService(ArticleStore articleStore, UserStore userStore, UserRepository userRepository)
+        private readonly IArticleRepository articleRepository = null!;
+        private readonly IUserRepository userRepository = null!;
+        public UserService(IArticleRepository articleRepository, IUserRepository userRepository)
         {
-            this.articleStore = articleStore;
-            this.userStore = userStore;
+            this.articleRepository = articleRepository;
             this.userRepository = userRepository;
+        }
+
+        public async Task<User> CreateUser(User user)
+        {
+            return await userRepository.CreateUser(user);
         }
     }
 }
