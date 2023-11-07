@@ -25,6 +25,5 @@ namespace MiniBlog.Repositories
             await userCollection.InsertOneAsync(user);
             return await GetByName(user.Name);
         }
-
     }
 }
