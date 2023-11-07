@@ -121,6 +121,7 @@ namespace MiniBlogTest.ControllerTest
             {
                 new Article("pengyu", "Let's smile to", "C#"),
             }));
+            mockArticle.Setup(r => r.DeleteArticleByName(userName)).Returns(Task.FromResult(1l));
             var client = GetClient(
                 new ArticleStore(),
                 new UserStore(
@@ -148,11 +149,7 @@ namespace MiniBlogTest.ControllerTest
             await client.DeleteAsync($"/user?name={userName}");
 
             // then
-            var articlesResponseAfterDeletion = await client.GetAsync("/article");
-            articlesResponseAfterDeletion.EnsureSuccessStatusCode();
-            var articlesLeft = JsonConvert.DeserializeObject<List<Article>>(
-                await articlesResponseAfterDeletion.Content.ReadAsStringAsync());
-            Assert.False(articlesLeft.Count == 0);
+            mockArticle.Verify(m => m.DeleteArticleByName(userName));
 
             var userResponseAfterDeletion = await client.GetAsync("/user");
             userResponseAfterDeletion.EnsureSuccessStatusCode();

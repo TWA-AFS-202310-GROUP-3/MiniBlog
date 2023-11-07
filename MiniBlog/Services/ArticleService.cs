@@ -21,6 +21,10 @@ public class ArticleService
         this.userRepository = userRepository;
     }
 
+    public ArticleService()
+    {
+    }
+
     public async Task<Article?> CreateArticle(Article article)
     {
         if (await userRepository.GetUserByName(article.UserName) == null)
@@ -39,5 +43,10 @@ public class ArticleService
     public async Task<Article> GetArticleById(string id)
     {
         return await articleRepository.GetArticleById(id);
+    }
+
+    public async Task<long> DeleteArticleByName(string name)
+    {
+        return await articleRepository.DeleteArticleByName(name);
     }
 }

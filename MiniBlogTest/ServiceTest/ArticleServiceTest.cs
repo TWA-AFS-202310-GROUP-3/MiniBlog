@@ -3,6 +3,7 @@ using MiniBlog.Repositories;
 using MiniBlog.Services;
 using MiniBlog.Stores;
 using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -28,5 +29,22 @@ public class ArticleServiceTest
 
         mockArticle.Verify(m => m.CreateArticle(newArticle));
         mockUser.Verify(m => m.GetUserByName(newArticle.UserName));
+    }
+
+    [Fact]
+    public async Task Should_get_article_when_GetById_given_valid_id()
+    {
+        var articleService = new ArticleService();
+        var id = Guid.NewGuid().ToString();
+        var expectedArticle = new Article("Jerry", "Let's code", "c#");
+        var mockArticle = new Mock<IArticleRepository>();
+        var mockUser = new Mock<IUserRepository>();
+        mockArticle.Setup(repo => repo.GetArticleById(id)).ReturnsAsync(expectedArticle);
+
+        //when
+        var article = await articleService.GetArticleById(id);
+        //then
+        Assert.Equal(expectedArticle, article);
+        mockArticle.Verify(repo => repo.GetArticleById(id));
     }
 }
