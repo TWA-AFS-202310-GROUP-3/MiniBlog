@@ -77,11 +77,15 @@ namespace MiniBlogTest.ControllerTest
                     return article;
                 });
 
-            var client = GetClient(new ArticleStore(new List<Article>
-            {
-                new Article(null, "Happy new year", "Happy 2021 new year"),
-                new Article(null, "Happy Halloween", "Halloween is coming"),
-            }), userStore, mockArticleRepository.Object, mockUserRepository.Object);
+            mockArticleRepository.Setup(repository => repository.GetArticles()).
+                Returns(Task.FromResult(new List<Article>
+                {
+                    new Article(null, "Happy new year", "Happy 2021 new year"),
+                    new Article(null, "Happy Halloween", "Halloween is coming"),
+                    article,
+                }));
+
+            var client = GetClient(new ArticleStore(), userStore, mockArticleRepository.Object, mockUserRepository.Object);
 
             var httpContent = JsonConvert.SerializeObject(article);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);

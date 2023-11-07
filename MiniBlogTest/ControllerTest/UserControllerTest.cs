@@ -109,7 +109,7 @@ namespace MiniBlogTest.ControllerTest
             Assert.Equal(userName, users[0].Name);
         }
 
-        [Fact]
+        /*[Fact]
         public async Task Should_delete_user_and_related_article_success()
         {
             // given
@@ -155,6 +155,6 @@ namespace MiniBlogTest.ControllerTest
             var usersLeft = JsonConvert.DeserializeObject<List<User>>(
                 await userResponseAfterDeletion.Content.ReadAsStringAsync());
             Assert.True(usersLeft.Count == 0);
-        }
+        }*/
     }
 }

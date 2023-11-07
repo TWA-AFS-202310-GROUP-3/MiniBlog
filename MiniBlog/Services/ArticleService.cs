@@ -14,7 +14,6 @@ public class ArticleService
     private readonly UserStore userStore = null!;
     private readonly IArticleRepository articleRepository = null!;
     private readonly IUserRepository userRepository = null!;
-    private object userReposity;
 
     public ArticleService(ArticleStore articleStore, UserStore userStore, IArticleRepository articleRepository, IUserRepository userRepository)
     {
@@ -24,13 +23,26 @@ public class ArticleService
         this.userRepository = userRepository;
     }
 
-    public async Task<Article?> CreateArticle(Article article)
+    /*public async Task<Article?> CreateArticle(Article article)
     {
         if (article.UserName != null)
         {
             if (await userRepository.GetByName(article.UserName) == null)
             {
                 await userRepository.Create(new User(article.UserName));
+            }
+        }
+
+        return await articleRepository.CreateArticle(article);
+    }*/
+    public async Task<Article?> CreateArticle(Article article)
+    {
+        if (article.UserName != null)
+        {
+            var result = userRepository.GetByName(article.UserName);
+            if (result == null)
+            {
+                _ = userRepository.Create(new User(article.UserName));
             }
         }
 
