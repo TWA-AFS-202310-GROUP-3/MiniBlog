@@ -14,6 +14,8 @@ namespace MiniBlog.Model
             this.Email = email;
         }
 
+        public static string CollectionName { get; set; } = "user";
+
         public string Name { get; set; }
 
         public string Email { get; set; }

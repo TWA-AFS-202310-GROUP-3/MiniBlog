@@ -19,21 +19,30 @@ namespace MiniBlogTest.ControllerTest
     [Collection("IntegrationTest")]
     public class ArticleControllerTest : TestBase
     {
+        private readonly Mock<IArticleRepository> mockArticleRepository;
+        private readonly Mock<IUserRepository> mockUserRepository;
+
+        private readonly ArticleStore articleStore;
+        private readonly UserStore userStore;
+
         public ArticleControllerTest(CustomWebApplicationFactory<Startup> factory)
             : base(factory)
         {
+            mockArticleRepository = new Mock<IArticleRepository>();
+            mockUserRepository = new Mock<IUserRepository>();
+            articleStore = new ArticleStore();
+            userStore = new UserStore(new List<User>());
         }
 
         [Fact]
         public async void Should_get_all_Article()
         {
-            var mock = new Mock<IArticleRepository>();
-            mock.Setup(repository => repository.GetArticles()).Returns(Task.FromResult(new List<Article>
+            mockArticleRepository.Setup(repository => repository.GetAll()).Returns(Task.FromResult(new List<Article>
             {
                 new Article(null, "Happy new year", "Happy 2021 new year"),
                 new Article(null, "Happy Halloween", "Halloween is coming"),
             }));
-            var client = GetClient(new ArticleStore(), new UserStore(new List<User>()), mock.Object);
+            var client = GetClient(new ArticleStore(), new UserStore(new List<User>()), mockArticleRepository.Object);
             var response = await client.GetAsync("/article");
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();

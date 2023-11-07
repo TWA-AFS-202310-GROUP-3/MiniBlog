@@ -10,7 +10,7 @@ namespace MiniBlog.Repositories
         public UserRepository(IMongoClient mongoClient)
         {
             var mongoDatabase = mongoClient.GetDatabase("MiniBlog");
-            userCollection = mongoDatabase.GetCollection<User>(User.UserCollectionName);
+            userCollection = mongoDatabase.GetCollection<User>(User.CollectionName);
         }
 
         public async Task<User> CreateUser(User user)
