@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
@@ -67,15 +68,25 @@ namespace MiniBlogTest.ControllerTest
         [Fact]
         public async void Should_create_article_and_register_user_correct()
         {
-            var client = GetClient(new ArticleStore(new List<Article>
+            mockArticleRepository.Setup(repository => repository.CreateArticle(It.IsAny<Article>())).ReturnsAsync((Article article) =>
             {
-                new Article(null, "Happy new year", "Happy 2021 new year"),
-                new Article(null, "Happy Halloween", "Halloween is coming"),
-            }), new UserStore(new List<User>()));
+                article.Id = Guid.NewGuid().ToString();
+                userStore.Users.Add(new User(article.UserName));
+                return article;
+            });
 
-            string userNameWhoWillAdd = "Tom";
-            string articleContent = "What a good day today!";
-            string articleTitle = "Good day";
+            mockArticleRepository.Setup(repository => repository.GetAll()).Returns(Task.FromResult(new List<Article>
+            {
+                new Article("xianke", "happy", "csgo"),
+            }));
+
+            mockUserRepository.Setup(repository => repository.GetUserByName(It.IsAny<string>())).ReturnsAsync(new User("xianke"));
+
+            var client = GetClient(articleStore, userStore, mockArticleRepository.Object, mockUserRepository.Object);
+
+            string userNameWhoWillAdd = "xianke";
+            string articleTitle = "happy";
+            string articleContent = "csgo";
             Article article = new Article(userNameWhoWillAdd, articleTitle, articleContent);
 
             var httpContent = JsonConvert.SerializeObject(article);
@@ -88,10 +99,10 @@ namespace MiniBlogTest.ControllerTest
             var articleResponse = await client.GetAsync("/article");
             var body = await articleResponse.Content.ReadAsStringAsync();
             var articles = JsonConvert.DeserializeObject<List<Article>>(body);
-            Assert.Equal(3, articles.Count);
-            Assert.Equal(articleTitle, articles[2].Title);
-            Assert.Equal(articleContent, articles[2].Content);
-            Assert.Equal(userNameWhoWillAdd, articles[2].UserName);
+            Assert.Equal(1, articles.Count);
+            Assert.Equal(articleTitle, articles[0].Title);
+            Assert.Equal(articleContent, articles[0].Content);
+            Assert.Equal(userNameWhoWillAdd, articles[0].UserName);
 
             var userResponse = await client.GetAsync("/user");
             var usersJson = await userResponse.Content.ReadAsStringAsync();
