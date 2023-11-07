@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
@@ -59,16 +60,32 @@ namespace MiniBlogTest.ControllerTest
         [Fact]
         public async void Should_create_article_and_register_user_correct()
         {
-            var client = GetClient(new ArticleStore(new List<Article>
-            {
-                new Article(null, "Happy new year", "Happy 2021 new year"),
-                new Article(null, "Happy Halloween", "Halloween is coming"),
-            }), new UserStore(new List<User>()));
-
             string userNameWhoWillAdd = "Tom";
             string articleContent = "What a good day today!";
             string articleTitle = "Good day";
             Article article = new Article(userNameWhoWillAdd, articleTitle, articleContent);
+
+            var userStore = new UserStore(new List<User>());
+            var mockArticleRepository = new Mock<IArticleRepository>();
+            var mockUserRepository = new Mock<IUserRepository>();
+
+            mockArticleRepository.Setup(repo => repo.CreateArticle(It.IsAny<Article>()))
+                .ReturnsAsync((Article article) =>
+                {
+                    article.Id = Guid.NewGuid().ToString();
+                    userStore.Users.Add(new User(article.UserName));
+                    return article;
+                });
+
+            mockArticleRepository.Setup(repository => repository.GetArticles()).
+                Returns(Task.FromResult(new List<Article>
+                {
+                    new Article(null, "Happy new year", "Happy 2021 new year"),
+                    new Article(null, "Happy Halloween", "Halloween is coming"),
+                    article,
+                }));
+
+            var client = GetClient(new ArticleStore(), userStore, mockArticleRepository.Object, mockUserRepository.Object);
 
             var httpContent = JsonConvert.SerializeObject(article);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
