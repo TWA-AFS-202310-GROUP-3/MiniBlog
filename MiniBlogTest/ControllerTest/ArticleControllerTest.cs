@@ -42,8 +42,7 @@ namespace MiniBlogTest.ControllerTest
                 new Article(null, "Happy new year", "Happy 2021 new year"),
                 new Article(null, "Happy Halloween", "Halloween is coming"),
             }));
-            var client = GetClient(new ArticleStore(), new UserStore(new List<User>()), mockArticleRepository.Object);
-            var response = await client.GetAsync("/article");
+            var client = GetClient(articleStore, userStore, mockArticleRepository.Object, mockUserRepository.Object); var response = await client.GetAsync("/article");
             response.EnsureSuccessStatusCode();
             var body = await response.Content.ReadAsStringAsync();
             var users = JsonConvert.DeserializeObject<List<Article>>(body);
@@ -53,8 +52,8 @@ namespace MiniBlogTest.ControllerTest
         [Fact]
         public async void Should_create_article_fail_when_ArticleStore_unavailable()
         {
-            var client = GetClient(null, new UserStore(new List<User>()));
-            string userNameWhoWillAdd = "Tom";
+            mockArticleRepository.Setup(repository => repository.CreateArticle(It.IsAny<Article>())).Throws(new System.Exception());
+            var client = GetClient(articleStore, userStore, mockArticleRepository.Object, mockUserRepository.Object); string userNameWhoWillAdd = "Tom";
             string articleContent = "What a good day today!";
             string articleTitle = "Good day";
             Article article = new Article(userNameWhoWillAdd, articleTitle, articleContent);
