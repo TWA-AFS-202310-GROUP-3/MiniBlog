@@ -18,7 +18,7 @@ namespace MiniBlogTest
 
         protected CustomWebApplicationFactory<Startup> Factory { get; }
 
-        protected HttpClient GetClient(ArticleStore articleStore = null, UserStore userStore = null, IArticleRepository articleRepository = null)
+        protected HttpClient GetClient(ArticleStore articleStore = null, UserStore userStore = null, IArticleRepository articleRepository = null, IUserRepository userRepository = null)
         {
             return Factory.WithWebHostBuilder(builder =>
             {

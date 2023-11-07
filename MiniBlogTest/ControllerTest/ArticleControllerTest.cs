@@ -63,7 +63,7 @@ namespace MiniBlogTest.ControllerTest
             {
                 new Article(null, "Happy new year", "Happy 2021 new year"),
                 new Article(null, "Happy Halloween", "Halloween is coming"),
-            }), new UserStore(new List<User>()));
+            }), new UserStore(new List<User>()));   //////Here
 
             string userNameWhoWillAdd = "Tom";
             string articleContent = "What a good day today!";

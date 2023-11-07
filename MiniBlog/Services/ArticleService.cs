@@ -13,6 +13,7 @@ public class ArticleService
     private readonly ArticleStore articleStore = null!;
     private readonly UserStore userStore = null!;
     private readonly IArticleRepository articleRepository = null!;
+    private readonly IUserRepository userRepository = null!;
 
     public ArticleService(ArticleStore articleStore, UserStore userStore, IArticleRepository articleRepository)
     {
@@ -23,12 +24,18 @@ public class ArticleService
 
     public async Task<Article?> CreateArticle(Article article)
     {
-        if (!userStore.Users.Exists(_ => article.UserName == _.Name))
+        if (article.UserName != null)
         {
-            userStore.Users.Add(new User(article.UserName));
+            List<User> userlist = await userRepository.GetUsers();
+            if (!userlist.Exists(_ => article.UserName == _.Name))
+            {
+                await userRepository.AddUser(new User(article.UserName));
+            }
+
+            return await articleRepository.CreateArticle(article);
         }
 
-        return await articleRepository.CreateArticle(article);
+        return article;
     }
 
     public async Task<List<Article>> GetAll()

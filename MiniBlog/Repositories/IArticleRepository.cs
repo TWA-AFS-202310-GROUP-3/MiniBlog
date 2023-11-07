@@ -8,6 +8,6 @@ namespace MiniBlog.Repositories
     {
         public Task<List<Article>> GetArticles();
         public Task<Article> CreateArticle(Article article);
-        Task<Article?> GetArticleById(string v);
+        public Task<Article?> GetArticleById(string v);
     }
 }
