@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.TestHost;
 using MiniBlog;
 using MiniBlog.Model;
@@ -59,11 +61,26 @@ namespace MiniBlogTest.ControllerTest
         [Fact]
         public async void Should_create_article_and_register_user_correct()
         {
+            var mockArticleRepository = new Mock<IArticleRepository>();
+            var mockUserRepository = new Mock<IUserRepository>();
+            mockArticleRepository.Setup(repository => repository.CreateArticle(It.IsAny<Article>()))
+                                 .Returns((Article a) => a);
+
+            mockArticleRepository.Setup(repository => repository.GetArticles())
+                                 .ReturnsAsync(
+                                    new List<Article>
+                                    {
+                                        new Article("Tom", "Good day", "What a good day today!"),
+                                        new Article("Tom", "Good day", "What a good day today!"),
+                                        new Article("Tom", "Good day", "What a good day today!"),
+                                    });
+            mockUserRepository.Setup(repository => repository.GetUserByName(It.IsAny<string>()))
+                              .ReturnsAsync(new User("Tom"));
             var client = GetClient(new ArticleStore(new List<Article>
             {
                 new Article(null, "Happy new year", "Happy 2021 new year"),
                 new Article(null, "Happy Halloween", "Halloween is coming"),
-            }), new UserStore(new List<User>()));   //////Here
+            }), new UserStore(new List<User>()), mockArticleRepository.Object, mockUserRepository.Object);   //////Here
 
             string userNameWhoWillAdd = "Tom";
             string articleContent = "What a good day today!";

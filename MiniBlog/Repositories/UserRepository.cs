@@ -23,5 +23,10 @@ namespace MiniBlog.Repositories
             await userCollection.InsertOneAsync(user);
             return await userCollection.Find(u => u.Name == user.Name).FirstOrDefaultAsync<User>();
         }
+
+        public async Task<User> GetUserByName(string userName)
+        {
+            return await userCollection.Find(u => u.Name == userName).FirstOrDefaultAsync();
+        }
     }
 }

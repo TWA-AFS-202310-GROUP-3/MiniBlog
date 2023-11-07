@@ -8,5 +8,6 @@ namespace MiniBlog.Repositories
     {
         public Task<List<User>> GetUsers();
         public Task<User> AddUser(User user);
+        public Task<User> GetUserByName(string userName);
     }
 }
