@@ -1,6 +1,6 @@
-using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace MiniBlog.Model
 {
@@ -22,10 +22,9 @@ namespace MiniBlog.Model
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; } = null!;
-
-        public string UserName { get; set; } = null!;
-        public string Title { get; set; } = null!;
-        public string Content { get; set; } = null!;
+        public string? Id { get; set; } = null;
+        public string UserName { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
     }
 }
